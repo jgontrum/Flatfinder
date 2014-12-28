@@ -6,6 +6,7 @@ import sys
 import time
 from Configuration import Configuration
 from email.mime.text import MIMEText
+from email.header import Header
 import smtplib
 import WebsiteParser
 # import prowlpy  # Optional for iOS push messages
@@ -18,10 +19,10 @@ smtpSender = None
 """ Sends an email to the configured recipient."""
 def sendMail(subject, message):
     try:
-        msg = MIMEText(message)
+        msg = MIMEText(message, _charset="UTF-8")
         msg['To'] = conf.smtpRecipient
         msg['From'] = conf.smtpMail
-        msg['Subject'] = subject
+        msg['Subject'] = Header(subject, "utf-8")
 
         # Send the message via an SMTP server
         try:
@@ -44,8 +45,24 @@ def sendProwl(subject, message, url):
 
 """ Creates a message from an offer and sends emails etc """
 def notify(offer):
-    print(offer)
-    pass
+    subject = "Flatfinder just found a new flat in " + offer['location']
+    message =   "Description:\t" + offer['title'] + "\n" \
+              + "Rent:          \t" + offer['rent'] + "\n" \
+              + "Location:   \t" + offer['location'] + ".\n" \
+              + "Found at:   \t" + offer['time'] + "\n" \
+              + "URL:        \t" + offer['url']
+    if conf.useMail:
+        sendMail(subject, message)
+    if conf.useProwl:
+        sendProwl(subject, message, offer['url'])
+    print subject
+
+""" Checks weather the offer is okay """
+def checkBlacklist(offer):
+    for blackword in conf.blacklist:
+        if blackword in offer['location']: return False
+        if blackword in offer['title']: return False
+    return True
 
 """ Converts the given text to unicode """
 def makeUnicode(text):
@@ -69,7 +86,7 @@ def init():
             print "Loading '" + sys.argv[1] + "' failed (" + str(e) + "), leaving now!"
             sys.exit(1)
 
-    """ Initialize the messaging protocols
+    """ Initialize the messaging protocols  """
     if configuration.useProwl:
         prowl = prowlpy.Prowl(configuration.prowlApi)
     if configuration.useMail:
@@ -79,7 +96,7 @@ def init():
         except Exception, e:
             print "Failed to connect to mailserver: " + str(e) + ".\nLeaving now!"
             sys.exit(1)
-    """
+
     """ Convert the blacklist to unicode """
     if len(configuration.blacklist) > 0:
         ublacklist = []
@@ -96,13 +113,13 @@ def loop():
         latestURL[id] = None
 
     while True:
-        print "Checking again..."
         for site, url in conf.URLs.items():
             if len(url) > 0:
                 offer = WebsiteParser.parse(site, url)
                 if offer['url'] != latestURL[site]:
                     latestURL[site] = offer['url']
-                    notify(offer)
+                    if checkBlacklist(offer):
+                        notify(offer)
         time.sleep(conf.interval)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
