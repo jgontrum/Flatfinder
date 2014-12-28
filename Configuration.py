@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
-__author__ = 'johannes'
+__author__ = 'Johannes Gontrum <gontrum@vogelschwarm.com>'
 
 import ConfigParser  # Read configuration files
 import sys
@@ -11,6 +11,14 @@ class Configuration(object):
         config.read(filename)
         self.__readConfig(config)
         self.__checkValidity()
+        # Maps idetifiers to their URLs
+        self.URLs = {'eBay': self.urlEbayKleinanzeigen,
+                     'WG1Zimmer': self.urlWGGesucht1ZimmerWohnung,
+                     'WGWohnung': self.urlWGGesuchtWohnung,
+                     'WohnungsBoerse': self.urlWohnungsBoerse,
+                     'Immowelt': self.urlImmowelt,
+                     'ImmoScout24': self.urlImmobilienScout24,
+                     'Immonet': self.urlImmonet}
 
     def __readConfig(self, config):
         # Mail
@@ -59,7 +67,6 @@ class Configuration(object):
             self.urlWohnungsBoerse = config.get("URL", "WohnungsBoerse")
             self.urlImmowelt = config.get("URL", "Immowelt")
             self.urlImmobilienScout24 = config.get("URL", "ImmobilienScout24")
-            self.urlEbayKleinanzeigen = config.get("URL", "EbayKleinanzeigen")
             self.urlImmonet = config.get("URL", "Immonet")
         except:
             print "Please specify the URLs in the configuration file!"
