@@ -16,7 +16,7 @@ class Configuration(object):
         # Mail
         try:
             self.useMail = True
-            self.mailAddresss = config.get("E-Mail", "Address")
+            self.smtpMail = config.get("E-Mail", "Address")
             self.smtpServer = config.get("E-Mail", "SMTP-Server")
             self.smtpUser = config.get("E-Mail", "SMTP-User")
             self.smtpPassword = config.get("E-Mail", "SMTP-Password")
@@ -27,7 +27,8 @@ class Configuration(object):
         # Prowl
         try:
             self.useProwl = True
-            self.smtpRecipient = config.get("Prowl", "API")
+            self.prowlApi = config.get("Prowl", "API")
+            self.prowlPriority = config.get("Prowl", "Priority")
         except:
             self.useProwl = False
 
@@ -61,7 +62,7 @@ class Configuration(object):
             self.urlEbayKleinanzeigen = config.get("URL", "EbayKleinanzeigen")
             self.urlImmonet = config.get("URL", "Immonet")
         except:
-            print "Please specify the URLs!"
+            print "Please specify the URLs in the configuration file!"
             sys.exit(1)
 
     def __checkValidity(self):
