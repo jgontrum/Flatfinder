@@ -55,7 +55,10 @@ class Configuration(object):
         # Blacklist
         try:
             blacklist = config.get("Config", "Blacklist")
-            self.blacklist = blacklist.split(';')
+            if len(blacklist) > 0:
+                self.blacklist = blacklist.split(';')
+            else:
+                self.blacklist = []
         except:
             self.blacklist = []
 
