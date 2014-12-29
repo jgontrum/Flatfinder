@@ -48,10 +48,9 @@ def sendProwl(subject, message, url):
         print "Sending Prowl message fails for unknown reasons. (" + str(e) + ")"
 
 """ Creates a message from an offer and sends emails etc """
-def notify(aoffer):
+def notify(offer):
     global counter
     counter += 1
-    offer = makeOfferUnicode(aoffer)
     subject = "Flatfinder found a new flat in " + offer['location']
     message =   "Description:\t" + offer['title'] + "\n" \
               + "Rent:          \t" + offer['rent'] + "\n" \
@@ -71,8 +70,8 @@ def notify(aoffer):
 """ Checks weather the offer is okay """
 def checkBlacklist(offer):
     for blackword in conf.blacklist:
-        if blackword in offer['location']: return False
-        if blackword in offer['title']: return False
+        if blackword in offer['location'].lower(): return False
+        if blackword in offer['title'].lower(): return False
     return True
 
 """ Converts the given text to unicode """
@@ -125,7 +124,7 @@ def init():
     if len(conf.blacklist) > 0:
         ublacklist = []
         for item in conf.blacklist:
-            ublacklist.append(makeUnicode(item))
+            ublacklist.append(makeUnicode(item).lower())
         conf.blacklist = ublacklist
 
     starttime = time.strftime("%A, %e. %B at %H:%M")
@@ -143,8 +142,11 @@ def loop():
                 offer = WebsiteParser.parse(site, url)
                 if offer['url'] != latestURL[site]:
                     latestURL[site] = offer['url']
+                    offer = makeOfferUnicode(offer)
                     if checkBlacklist(offer):
                         notify(offer)
+                    else:
+                        print "ignoring" + str(offer)
         time.sleep(conf.interval)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
