@@ -145,8 +145,6 @@ def loop():
                     offer = makeOfferUnicode(offer)
                     if checkBlacklist(offer):
                         notify(offer)
-                    else:
-                        print "ignoring" + str(offer)
         time.sleep(conf.interval)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
