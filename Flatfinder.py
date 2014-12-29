@@ -52,8 +52,7 @@ def notify(aoffer):
     global counter
     counter += 1
     offer = makeOfferUnicode(aoffer)
-    subject = "Flatfinder just found a new flat in " + offer['location']
-    print(offer)
+    subject = "Flatfinder found a new flat in " + offer['location']
     message =   "Description:\t" + offer['title'] + "\n" \
               + "Rent:          \t" + offer['rent'] + "\n" \
               + "Location:   \t" + offer['location'] + ".\n" \
