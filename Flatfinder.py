@@ -29,15 +29,22 @@ def sendMail(subject, message):
 
         # Send the message via an SMTP server
         try:
+            smtpSender.ehlo()
+            smtpSender.starttls()
+            smtpSender.ehlo()
+            smtpSender.login(conf.smtpUser, conf.smtpPassword)
             smtpSender.sendmail(conf.smtpMail, conf.smtpRecipient, msg.as_string())
         except:
             smtpSender = smtplib.SMTP(conf.smtpServer)
+            smtpSender.ehlo()
+            smtpSender.starttls()
+            smtpSender.ehlo()
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
             smtpSender.sendmail(conf.smtpMail, conf.smtpRecipient, msg.as_string())
     except smtplib.SMTPDataError as e:
         print("Error sending email: " + str(e))
     except Exception as e:
-        print("Sending email fails for unknown reasons. (" +  str(e) +  ")")
+        print("Sending email fails for unknown reasons. (" + str(e) + ")")
 
 # DEPRECATED: Sends a message to an iOS device via Prowl
 def sendProwl(subject, message, url):
@@ -115,7 +122,11 @@ def init():
     if conf.useMail:
         try:
             smtpSender = smtplib.SMTP(conf.smtpServer)
+            smtpSender.ehlo()
+            smtpSender.starttls()
+            smtpSender.ehlo()
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
+            smtpSender.quit()
         except Exception as e:
             print("Failed to connect to mailserver: " + str(e) + ".\nLeaving now!")
             sys.exit(1)
