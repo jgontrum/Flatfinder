@@ -5,7 +5,7 @@ import urllib
 import time
 import sys
 import re
-from beautifulsoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 
 
 def get_time_stamp():

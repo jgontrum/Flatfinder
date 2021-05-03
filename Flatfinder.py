@@ -147,11 +147,12 @@ def loop():
         for site, url in conf.URLs.items():
             if len(url) > 0:
                 offer = WebsiteParser.parse(site, url)
-                if offer['url'] != latestURL[site]:
-                    latestURL[site] = offer['url']
-                    offer = makeOfferUnicode(offer)
-                    if checkBlacklist(offer):
-                        notify(offer)
+                if offer is not None:
+                    if offer['url'] != latestURL[site]:
+                        latestURL[site] = offer['url']
+                        offer = makeOfferUnicode(offer)
+                        if checkBlacklist(offer):
+                            notify(offer)
         time.sleep(conf.interval)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
