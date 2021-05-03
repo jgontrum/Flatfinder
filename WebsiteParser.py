@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Johannes Gontrum <gontrum@vogelschwarm.com>'
 
-import urllib
+from urllib.request import Request,  urlopen
 import time
 import sys
 import re
 from bs4 import BeautifulSoup
+
+
+def get_beautiful_soup(url):
+    req = Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
+    return BeautifulSoup(urlopen(req).read(), 'html.parser')
 
 
 def get_time_stamp():
@@ -36,8 +41,7 @@ def parse(site, url):
 
 
 def __eBay(url):
-    page = urllib.request.urlopen(url)
-    ebay_page = BeautifulSoup(page.read())
+    ebay_page = get_beautiful_soup(url)
     # Most recent offer
     most_recent_ad = ebay_page.find("li", attrs={"class": "ad-listitem   "})
     # Title
@@ -55,8 +59,7 @@ def __eBay(url):
 
 
 def __WG1Zimmer(url):
-    page = urllib.request.urlopen(url)
-    wg_page = BeautifulSoup(page.read())
+    wg_page = get_beautiful_soup(url)
     # Most recent offer
     most_recent_ad = wg_page.find("div", attrs={"class": "list-details-ad-wrapper CLR "})
     # URL
@@ -64,24 +67,23 @@ def __WG1Zimmer(url):
     title = most_recent_ad.find("h2").find("a").get_text().strip()
     # Rent
     rent_raw = most_recent_ad.find("strong", attrs={"class": "list-details-ad-price"})
-    rentList = rent_raw.find("a").get_text().split()
-    if len(rentList) == 3:
-        rent = rentList[2]
+    rent_list = rent_raw.find("a").get_text().split()
+    if len(rent_list) == 3:
+        rent = rent_list[2]
     else:
-        rent = " ".join(rentList)
+        rent = " ".join(rent_list)
     # Location
-    locationList = most_recent_ad.find("p").get_text().strip().split("\n")
-    if len(locationList) == 2:
-        location = locationList[0].strip()
+    location_list = most_recent_ad.find("p").get_text().strip().split("\n")
+    if len(location_list) == 2:
+        location = location_list[0].strip()
     else:
-        location = " ".join(locationList)
+        location = " ".join(location_list)
     # Process data
     return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
 
 
 def __WGWohnung(url):
-    page = urllib.request.urlopen(url)
-    wg_page = BeautifulSoup(page.read())
+    wg_page = get_beautiful_soup(url)
     # Most recent offer
     most_recent_ad = wg_page.find("div", attrs={"class": "list-details-ad-wrapper CLR "})
     # URL
@@ -106,11 +108,12 @@ def __WGWohnung(url):
 
 def __WohnungsBoerse(url):
     # Receiving data from javascript in the html header
-    page = urllib.request.urlopen(url)
+    req = Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
+    page = urlopen(req)
     find_area = re.compile("geocode\(.*?\}\);", re.DOTALL)
 
     offer_raw = find_area.findall(str(page.read()))[0]
-    identificator = re.findall(r", \d+,", offer_raw)[0].replace(",","").lstrip()
+    identification = re.findall(r", \d+,", offer_raw)[0].replace(",","").lstrip()
 
     tokenized = re.findall(r"'.*?'", offer_raw)
     # Position | Data
@@ -125,14 +128,13 @@ def __WohnungsBoerse(url):
     location = tokenized[0].replace("'", "")
     rent = tokenized[3].replace("'", "").replace("&euro", u"€")
     title = tokenized[6].replace("'", "")
-    link = "http://www.wohnungsboerse.net/immodetail/" + identificator
+    link = "http://www.wohnungsboerse.net/immodetail/" + identification
 
     return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
 
 
 def __Immowelt(url):
-    page = urllib.request.urlopen(url)
-    immow_page = BeautifulSoup(page.read())
+    immow_page = get_beautiful_soup(url)
     # Most recent offer
     most_recent_offer = immow_page.find("div", {"class": "divObject  listitem_new_wrap"})
     # Title
@@ -150,8 +152,7 @@ def __Immowelt(url):
 
 
 def __ImmoScout24(url):
-    page = urllib.request.urlopen(url)
-    immoc_page = BeautifulSoup(page.read())
+    immoc_page = get_beautiful_soup(url)
     # Most recent offer
     most_recent_offer = immoc_page.find("div", {"class": "resultlist_entry_data"})
     # Title
@@ -168,8 +169,7 @@ def __ImmoScout24(url):
 
 
 def __Immonet(url):
-    page = urllib.request.urlopen(url)
-    immonet_page = BeautifulSoup(page.read())
+    immonet_page = get_beautiful_soup(url)
     # Most recent offer
     most_recent_offer = immonet_page.find("div", {"class": "selListItem"})
     # Title

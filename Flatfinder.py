@@ -122,7 +122,7 @@ def init():
             smtpSender.starttls()
             smtpSender.ehlo()
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
-            sendMail("Flatfinder started", "Flatfinder for python 3 started at "+time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
+            # sendMail("Flatfinder started", "Flatfinder for python 3 started at "+time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
         except Exception as e:
             print("Failed to connect to mailserver: " + str(e) + ".\nLeaving now!")
             sys.exit(1)
