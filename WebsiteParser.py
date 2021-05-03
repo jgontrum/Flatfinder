@@ -36,7 +36,7 @@ def parse(site, url):
 
 
 def __eBay(url):
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     ebay_page = BeautifulSoup(page.read())
     # Most recent offer
     most_recent_ad = ebay_page.find("li", attrs={"class": "ad-listitem   "})
@@ -55,7 +55,7 @@ def __eBay(url):
 
 
 def __WG1Zimmer(url):
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     wg_page = BeautifulSoup(page.read())
     # Most recent offer
     most_recent_ad = wg_page.find("div", attrs={"class": "list-details-ad-wrapper CLR "})
@@ -80,7 +80,7 @@ def __WG1Zimmer(url):
 
 
 def __WGWohnung(url):
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     wg_page = BeautifulSoup(page.read())
     # Most recent offer
     most_recent_ad = wg_page.find("div", attrs={"class": "list-details-ad-wrapper CLR "})
@@ -106,7 +106,7 @@ def __WGWohnung(url):
 
 def __WohnungsBoerse(url):
     # Receiving data from javascript in the html header
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     find_area = re.compile("geocode\(.*?\}\);", re.DOTALL)
 
     offer_raw = find_area.findall(str(page.read()))[0]
@@ -122,7 +122,7 @@ def __WohnungsBoerse(url):
     # 6        | Title
     # 7,8      | ZIP + City
 
-    location = tokenized[0].replace("'","")
+    location = tokenized[0].replace("'", "")
     rent = tokenized[3].replace("'", "").replace("&euro", u"€")
     title = tokenized[6].replace("'", "")
     link = "http://www.wohnungsboerse.net/immodetail/" + identificator
@@ -131,7 +131,7 @@ def __WohnungsBoerse(url):
 
 
 def __Immowelt(url):
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     immow_page = BeautifulSoup(page.read())
     # Most recent offer
     most_recent_offer = immow_page.find("div", {"class": "divObject  listitem_new_wrap"})
@@ -150,7 +150,7 @@ def __Immowelt(url):
 
 
 def __ImmoScout24(url):
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     immoc_page = BeautifulSoup(page.read())
     # Most recent offer
     most_recent_offer = immoc_page.find("div", {"class": "resultlist_entry_data"})
@@ -168,7 +168,7 @@ def __ImmoScout24(url):
 
 
 def __Immonet(url):
-    page = urllib.urlopen(url)
+    page = urllib.request.urlopen(url)
     immonet_page = BeautifulSoup(page.read())
     # Most recent offer
     most_recent_offer = immonet_page.find("div", {"class": "selListItem"})
