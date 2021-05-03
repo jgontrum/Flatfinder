@@ -44,7 +44,7 @@ def __eBay(url):
     ebay_page = get_beautiful_soup(url)
     title = ebay_page.find("title")
     print(title)
-    # Most recent offer
+    # Get most recent offer
     most_recent_ad = ebay_page.find("li", attrs={"class": "ad-listitem"})
     # todo title
     # todo link
