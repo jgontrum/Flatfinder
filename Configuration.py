@@ -2,12 +2,12 @@
 # !/usr/bin/env python
 __author__ = 'Johannes Gontrum <gontrum@vogelschwarm.com>'
 
-import ConfigParser  # Read configuration files
+import configparser  # Read configuration files
 import sys
 
 class Configuration(object):
     def __init__(self, filename):
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read(filename)
         self.__readConfig(config)
         self.__checkValidity()
@@ -72,34 +72,34 @@ class Configuration(object):
             self.urlImmobilienScout24 = config.get("URL", "ImmobilienScout24")
             self.urlImmonet = config.get("URL", "Immonet")
         except:
-            print "Please specify the URLs in the configuration file!"
+            print("Please specify the URLs in the configuration file!")
             sys.exit(1)
 
     def __checkValidity(self):
         if not "kleinanzeigen.ebay.de" in self.urlEbayKleinanzeigen and len(self.urlEbayKleinanzeigen) > 0:
-            print "The URL for 'eBay Kleinanzeigen' is not valid."
+            print("The URL for 'eBay Kleinanzeigen' is not valid.")
             self.urlEbayKleinanzeigen = ""
 
         if not "www.wg-gesucht.de/1-zimmer-wohnungen" in self.urlWGGesucht1ZimmerWohnung and len(self.urlWGGesucht1ZimmerWohnung) > 0:
-            print "The URL for 'WG Gesucht (1-Zimmerwohnung)' is not valid."
+            print("The URL for 'WG Gesucht (1-Zimmerwohnung)' is not valid.")
             self.urlWGGesucht1ZimmerWohnung = ""
 
         if not "www.wg-gesucht.de/wohnungen" in self.urlWGGesuchtWohnung and len(self.urlWGGesuchtWohnung) > 0:
-            print "The URL for 'WG Gesucht' is not valid."
+            print("The URL for 'WG Gesucht' is not valid.")
             self.urlWGGesuchtWohnung = ""
 
         if not "www.wohnungsboerse.net" in self.urlWohnungsBoerse and len(self.urlWohnungsBoerse) > 0:
-            print "The URL for 'Wohnungsboerse' is not valid."
+            print("The URL for 'Wohnungsboerse' is not valid.")
             self.urlWohnungsBoerse = ""
 
         if not "www.immowelt.de" in self.urlImmowelt and len(self.urlImmowelt) > 0:
-            print "The URL for 'Immowelt' is not valid."
+            print("The URL for 'Immowelt' is not valid.")
             self.urlImmowelt = ""
 
         if not "www.immobilienscout24.de" in self.urlImmobilienScout24 and len(self.urlImmobilienScout24) > 0:
-            print "The URL for 'ImmobilienScout24' is not valid."
+            print("The URL for 'ImmobilienScout24' is not valid.")
             self.urlImmobilienScout24 = ""
 
         if not "www.immonet.de" in self.urlImmonet and len(self.urlImmonet) > 0:
-            print "The URL for 'Immonet' is not valid."
+            print("The URL for 'Immonet' is not valid.")
             self.urlImmonet = ""
