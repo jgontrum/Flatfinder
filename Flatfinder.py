@@ -29,10 +29,6 @@ def sendMail(subject, message):
 
         # Send the message via an SMTP server
         try:
-            smtpSender.ehlo()
-            smtpSender.starttls()
-            smtpSender.ehlo()
-            smtpSender.login(conf.smtpUser, conf.smtpPassword)
             smtpSender.sendmail(conf.smtpMail, conf.smtpRecipient, msg.as_string())
         except:
             smtpSender = smtplib.SMTP(conf.smtpServer)
@@ -126,7 +122,7 @@ def init():
             smtpSender.starttls()
             smtpSender.ehlo()
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
-            smtpSender.quit()
+            sendMail("Flatfinder started", "Flatfinder for python 3 started at "+time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
         except Exception as e:
             print("Failed to connect to mailserver: " + str(e) + ".\nLeaving now!")
             sys.exit(1)
