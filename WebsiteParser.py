@@ -42,20 +42,16 @@ def parse(site, url):
 
 def __eBay(url):
     ebay_page = get_beautiful_soup(url)
+    title = ebay_page.find("title")
+    print(title)
     # Most recent offer
-    most_recent_ad = ebay_page.find("li", attrs={"class": "ad-listitem   "})
-    # Title
-    title = most_recent_ad.find("a", attrs={"class": "ad-title"})
-    # URL
-    link = "http://kleinanzeigen.ebay.de" + title.get('href')
-    # Text
-    text = title.get_text()
-    # Rent
-    rent = most_recent_ad.find("strong").get_text()
-    # Location
-    location = most_recent_ad.find("h3").get_text(" ")
-    # Process data
-    return {"title": text, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    most_recent_ad = ebay_page.find("li", attrs={"class": "ad-listitem"})
+    # todo title
+    # todo link
+    # todo rent
+    # todo location
+    # ad = {"title": ad_description, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return None
 
 
 def __WG1Zimmer(url):
