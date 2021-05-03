@@ -18,7 +18,7 @@ smtpSender = None
 counter = 0
 starttime = ""
 
-""" Sends an email to the configured recipient."""
+# Sends an email to the configured recipient.
 def sendMail(subject, message):
     global smtpSender
     try:
@@ -34,20 +34,20 @@ def sendMail(subject, message):
             smtpSender = smtplib.SMTP(conf.smtpServer)
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
             smtpSender.sendmail(conf.smtpMail, conf.smtpRecipient, msg.as_string())
-    except smtplib.SMTPDataError, e:
-        print "Error sending email: " + str(e)
-    except Exception, e:
-        print "Sending email fails for unknown reasons. (" +  str(e) +  ")"
+    except smtplib.SMTPDataError as e:
+        print("Error sending email: " + str(e))
+    except Exception as e:
+        print("Sending email fails for unknown reasons. (" +  str(e) +  ")")
 
-""" Sends a message to an iOS device via Prowl."""
+# DEPRECATED: Sends a message to an iOS device via Prowl
 def sendProwl(subject, message, url):
     global prowl
     try:
         prowl.add(subject, message, conf.prowlPriority, None, url)
-    except Exception, e:
-        print "Sending Prowl message fails for unknown reasons. (" + str(e) + ")"
+    except Exception as e:
+        print("Sending Prowl message fails for unknown reasons. (" + str(e) + ")")
 
-""" Creates a message from an offer and sends emails etc """
+# Creates a message from an offer and sends emails etc
 def notify(offer):
     global counter
     counter += 1
@@ -65,62 +65,62 @@ def notify(offer):
         sendMail(subject, message + meta)
     if conf.useProwl:
         sendProwl(subject, message, offer['url'])
-    print subject
+    print(subject)
 
-""" Checks weather the offer is okay """
+# Checks weather the offer is okay
 def checkBlacklist(offer):
     for blackword in conf.blacklist:
         if blackword in offer['location'].lower(): return False
         if blackword in offer['title'].lower(): return False
     return True
 
-""" Converts the given text to unicode """
+# Converts the given text to unicode
 def makeUnicode(text):
-    if not isinstance(text, unicode):
+    if not isinstance(text, str):
         return text.decode('utf-8')
     return text
 
-""" Converts a whole offer object to unicode """
+# Converts a whole offer object to unicode
 def makeOfferUnicode(offer):
     uoffer = {}
     for key, value in offer.items():
         uoffer[key] = makeUnicode(value)
     return uoffer
 
-""" Initialize variables """
+# Initialize variables
 def init():
     global starttime
     global conf
     global prowl
     global smtpSender
-    """ Read configuration file """
+    # Read configuration file
     if len(sys.argv) != 2:
-        print "Try to use 'flatfinder.config' as default configuration file..."
+        print("Try to use 'flatfinder.config' as default configuration file...")
         try:
             conf = Configuration("flatfinder.config")
-        except Exception, e:
-            print "Loading 'flatfinder.config' failed (" + str(e) + "), leaving now!"
+        except Exception as e:
+            print("Loading 'flatfinder.config' failed (" + str(e) + "), leaving now!")
             sys.exit(1)
     else:
-        print "Try to use '" + sys.argv[1] + "' as configuration file..."
+        print("Try to use '" + sys.argv[1] + "' as configuration file...")
         try:
             conf = Configuration(sys.argv[1])
-        except Exception, e:
-            print "Loading '" + sys.argv[1] + "' failed (" + str(e) + "), leaving now!"
+        except Exception as e:
+            print("Loading '" + sys.argv[1] + "' failed (" + str(e) + "), leaving now!")
             sys.exit(1)
 
-    """ Initialize the messaging protocols  """
-    if conf.useProwl:
-        prowl = prowlpy.Prowl(conf.prowlApi)
+    # Initialize the messaging protocols
+    # if conf.useProwl:
+    #    prowl = prowlpy.Prowl(conf.prowlApi)
     if conf.useMail:
         try:
             smtpSender = smtplib.SMTP(conf.smtpServer)
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
-        except Exception, e:
-            print "Failed to connect to mailserver: " + str(e) + ".\nLeaving now!"
+        except Exception as e:
+            print("Failed to connect to mailserver: " + str(e) + ".\nLeaving now!")
             sys.exit(1)
 
-    """ Convert the blacklist to unicode """
+    # Convert the blacklist to unicode
     if len(conf.blacklist) > 0:
         ublacklist = []
         for item in conf.blacklist:
@@ -129,7 +129,7 @@ def init():
 
     starttime = time.strftime("%A, %e. %B at %H:%M")
 
-""" The main loop that never stops. NEVER! """
+# The main loop that never stops. NEVER!
 def loop():
     # Dict to save the last seen URL.
     latestURL = dict(conf.URLs)
