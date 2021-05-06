@@ -146,19 +146,21 @@ def __WohnungsBoerse(url):
 def __Immowelt(url):
     immow_page = get_beautiful_soup(url)
     # Most recent offer
-    most_recent_offer = immow_page.find("div", {"class": "divObject  listitem_new_wrap"})
+    results = immow_page.find("div", attrs={"class": "iw_list_content"})
+    newest_ad = results.find("div", attrs={"class": "listitem"})
+    ad_content = newest_ad.find("div", attrs={"class": "listcontent"})
     # Title
-    url = most_recent_offer.find("a")
-    title = most_recent_offer.find("h3").get_text()
+    title = newest_ad.find("h2").get_text()
     # URL
-    link = "http://www.immowelt.de" + url.get("href")
+    link = get_netloc(url) + newest_ad.find("a").get("href")
     # Rent
-    rent = most_recent_offer.find("div", {"class": "hardfact"}).get_text()
+    hard_fact = ad_content.find("div", attrs={"class": "hardfact price_rent"})
+    rent = hard_fact.find("strong").get_text().strip()
     # Location
-    location_raw = most_recent_offer.find("div", {"class": "location location_exact"}).get_text(" ")
-    location = ' '.join(location_raw.split())
+    location = ad_content.find("div", {"class": "listlocation"}).get_text().strip()
     # Process data
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
 
 
 def __ImmoScout24(url):
