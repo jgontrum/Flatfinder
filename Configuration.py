@@ -26,6 +26,7 @@ class Configuration(object):
             self.useMail = True
             self.smtpMail = config.get("E-Mail", "Address")
             self.smtpServer = config.get("E-Mail", "SMTP-Server")
+            self.smtpPort = config.get("E-Mail", "SMTP-Port")
             self.smtpUser = config.get("E-Mail", "SMTP-User")
             self.smtpPassword = config.get("E-Mail", "SMTP-Password")
             self.smtpRecipient = config.get("E-Mail", "Recipient")

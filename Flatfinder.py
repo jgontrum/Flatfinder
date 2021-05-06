@@ -31,7 +31,7 @@ def sendMail(subject, message):
         try:
             smtpSender.sendmail(conf.smtpMail, conf.smtpRecipient, msg.as_string())
         except:
-            smtpSender = smtplib.SMTP(conf.smtpServer)
+            smtpSender = smtplib.SMTP(conf.smtpServer, conf.smtpPort)
             smtpSender.ehlo()
             smtpSender.starttls()
             smtpSender.ehlo()
@@ -117,7 +117,7 @@ def init():
     #    prowl = prowlpy.Prowl(conf.prowlApi)
     if conf.useMail:
         try:
-            smtpSender = smtplib.SMTP(conf.smtpServer)
+            smtpSender = smtplib.SMTP(conf.smtpServer, conf.smtpPort)
             smtpSender.ehlo()
             smtpSender.starttls()
             smtpSender.ehlo()
