@@ -92,25 +92,27 @@ def __WG1Zimmer(url):
 def __WGWohnung(url):
     wg_page = get_beautiful_soup(url)
     # Most recent offer
-    most_recent_ad = wg_page.find("div", attrs={"class": "list-details-ad-wrapper CLR "})
+    most_recent_ad = wg_page.find("div", attrs={"class": "wgg_card offer_list_item"})
+    card_body = most_recent_ad.find("div", attrs={"class": "card_body"})
     # URL
-    link = "http://www.wg-gesucht.de/" + most_recent_ad.find("h2").find("a").get("href")
-    title = most_recent_ad.find("h2").find("a").get_text().strip()
+    link = "http://www.wg-gesucht.de/" + card_body.find("a").get("href")
+    # Title
+    title = card_body.find("h3").get("title")
     # Rent
-    rent_raw = most_recent_ad.find("strong", attrs={"class": "list-details-ad-price"})
-    rent_list = rent_raw.find("a").get_text().split()
+    rent_list = card_body.find("b").get_text().split()
     if len(rent_list) == 3:
         rent = rent_list[2]
     else:
         rent = " ".join(rent_list)
     # Location
-    location_list = most_recent_ad.find("p").get_text().strip().split("\n")
-    if len(location_list) == 2:
-        location = location_list[0].strip()
-    else:
-        location = " ".join(location_list)
+    card_body_row = card_body.find("div", attrs={"col-xs-11"})
+    location_list_raw = card_body_row.find("span").get_text().strip().split("|")
+    location_list = location_list_raw[1].strip("\n").split()
+    location = "{} {}".format(location_list[0], location_list[1])
+
     # Process data
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
 
 
 def __WohnungsBoerse(url):
