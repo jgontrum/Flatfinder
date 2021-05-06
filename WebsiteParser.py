@@ -166,18 +166,20 @@ def __Immowelt(url):
 def __ImmoScout24(url):
     immoc_page = get_beautiful_soup(url)
     # Most recent offer
-    most_recent_offer = immoc_page.find("div", {"class": "resultlist_entry_data"})
+    ads = immoc_page.find("div", attrs={"id": "listings"})
+    newest_ad = ads.find("article", attrs={"class": "result-list-entry"})
     # Title
-    url = most_recent_offer.find("a")
-    title = url.get("title")
+    header = newest_ad.find("h5", attrs={"class": "result-list-entry__brand-title"}).get_text().strip()
+    title = header[3:]
     # URL
-    link = "http://www.immobilienscout24.de" + url.get("href")
+    link = get_netloc(url) + newest_ad.find("a").get("href")
     # Rent
-    rent = most_recent_offer.find("dd", {"class": "value"}).get_text().split()[0]
+    rent = newest_ad.find("dd").get_text().strip()
     # Location
-    location = most_recent_offer.find("span", {"class": "street"}).get_text(" ")
+    location = newest_ad.find("button", attrs={"class": "result-list-entry__map-link"}).get_text().strip()
     # Process data
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
 
 
 def __Immonet(url):
