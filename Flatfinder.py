@@ -64,8 +64,8 @@ def notify(offer):
     meta = "\n-----------------\n" + \
            "Flatfinder started on " + starttime + " and found " + str(counter) + " ads since."
 
-#    if conf.useMail:
-#        sendMail(subject, message + meta)
+    if conf.useMail:
+        sendMail(subject, message + meta)
 #    if conf.useProwl:
 #        sendProwl(subject, message, offer['url'])
     print(subject)
