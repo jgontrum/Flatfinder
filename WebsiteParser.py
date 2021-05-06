@@ -48,15 +48,13 @@ def parse(site, url):
 
 def __eBay(url):
     ebay_page = get_beautiful_soup(url)
-    parsed_uri = urlparse(url)
-    netloc = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     # Get the results for the search
     search_results = ebay_page.find("div", attrs={"id": "srchrslt-content"})
     # Get the newest ad
     newest_ad = search_results.find("article", attrs={"class": "aditem"})
     ad_content = newest_ad.find("div", attrs={"class": "aditem-main--middle"})
     # Get the link
-    link = netloc + ad_content.find("a").get("href")
+    link = get_netloc(url) + ad_content.find("a").get("href")
     # Get title
     desc = ad_content.find("a").get_text()
     # Get rent
@@ -64,6 +62,7 @@ def __eBay(url):
     # Get location
     location = newest_ad.find("div", attrs={"class": "aditem-main--top--left"}).get_text().strip()
 
+    # Process data
     ad = {"title": desc, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
     return ad
 
