@@ -153,6 +153,9 @@ def loop():
                         offer = makeOfferUnicode(offer)
                         if checkBlacklist(offer):
                             notify(offer)
+                else:
+                    print("Failed to parse website. "
+                          "You may want to check the code in WebsiteParser.py for correct behaviour of bs4")
         time.sleep(conf.interval)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
