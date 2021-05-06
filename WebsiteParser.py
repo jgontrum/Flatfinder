@@ -138,7 +138,8 @@ def __WohnungsBoerse(url):
     # Search results
     search_results = page.find("section", attrs={"class": "search_result_container"})
     # Newest ad
-    newest_ad = search_results.find("div", attrs={"class": "search_result_entry"})
+    new_tag = search_results.find("div", attrs={"class": "stoerer new"})
+    newest_ad = new_tag.parent
     ad_data = newest_ad.find("div", attrs={"class": "search_result_entry-data"})
     headline = ad_data.find("h3", attrs={"class": "search_result_entry-headline"})
     # Title

@@ -64,8 +64,8 @@ def notify(offer):
     meta = "\n-----------------\n" + \
            "Flatfinder started on " + starttime + " and found " + str(counter) + " ads since."
 
-    if conf.useMail:
-        sendMail(subject, message + meta)
+#    if conf.useMail:
+#        sendMail(subject, message + meta)
 #    if conf.useProwl:
 #        sendProwl(subject, message, offer['url'])
     print(subject)
@@ -142,30 +142,17 @@ def loop():
     latestURL = dict(conf.URLs)
     for id in latestURL.keys():
         latestURL[id] = None
-    # Dict to save "pre" latest seen URL (Wohnungsboerse)
-    prelatestURL = dict(conf.URLs)
-    for id in prelatestURL.keys():
-        prelatestURL[id] = None
 
     while True:
         for site, url in conf.URLs.items():
             if len(url) > 0:
                 offer = WebsiteParser.parse(site, url)
                 if offer is not None:
-                    if site == conf.urlWohnungsBoerse:
-                        if offer['url'] != prelatestURL[site]:
-                            if offer['url'] != latestURL[site]:
-                                prelatestURL[site] = latestURL[site]
-                                latestURL[site] = offer['url']
-                                offer = makeOfferUnicode(offer)
-                                if checkBlacklist(offer):
-                                    notify(offer)
-                    else:
-                        if offer['url'] != latestURL[site]:
-                            latestURL[site] = offer['url']
-                            offer = makeOfferUnicode(offer)
-                            if checkBlacklist(offer):
-                                notify(offer)
+                    if offer['url'] != latestURL[site]:
+                        latestURL[site] = offer['url']
+                        offer = makeOfferUnicode(offer)
+                        if checkBlacklist(offer):
+                            notify(offer)
                 else:
                     print("Failed to parse website. "
                           "You may want to check the code in WebsiteParser.py for correct behaviour of bs4")
