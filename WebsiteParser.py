@@ -14,6 +14,11 @@ def get_beautiful_soup(url):
     return BeautifulSoup(urlopen(req).read(), 'html.parser')
 
 
+def get_netloc(url):
+    parsed_uri = urlparse(url)
+    return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+
+
 def get_time_stamp():
     return time.strftime("%b %d %Y %H:%M:%S", time.localtime())
 
@@ -116,30 +121,27 @@ def __WGWohnung(url):
 
 
 def __WohnungsBoerse(url):
-    # Receiving data from javascript in the html header
-    req = Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
-    page = urlopen(req)
-    find_area = re.compile("geocode\(.*?\}\);", re.DOTALL)
+    page = get_beautiful_soup(url)
+    # Search results
+    search_results = page.find("section", attrs={"class": "search_result_container"})
+    # Newest ad
+    newest_ad = search_results.find("div", attrs={"class": "search_result_entry"})
+    ad_data = newest_ad.find("div", attrs={"class": "search_result_entry-data"})
+    headline = ad_data.find("h3", attrs={"class": "search_result_entry-headline"})
+    # Title
+    title = headline.find("a").get("title")
+    # Link
+    link = get_netloc(url) + headline.find("a").get("href")
+    # Rent
+    props = newest_ad.find("div", attrs={"class": "search_result_entry-objectproperties"})
+    rent = "".join(props.find("dd").get_text().strip().split())
+    # Location
+    location = "".join(
+        newest_ad.find("div", attrs={"class": "search_result_entry-subheadline"}).get_text().strip())
 
-    offer_raw = find_area.findall(str(page.read()))[0]
-    identification = re.findall(r", \d+,", offer_raw)[0].replace(",","").lstrip()
-
-    tokenized = re.findall(r"'.*?'", offer_raw)
-    # Position | Data
-    # 0        | Address
-    # 1        | Rooms
-    # 2        | Size
-    # 3        | Rent
-    # 4,5      | -
-    # 6        | Title
-    # 7,8      | ZIP + City
-
-    location = tokenized[0].replace("'", "")
-    rent = tokenized[3].replace("'", "").replace("&euro", u"€")
-    title = tokenized[6].replace("'", "")
-    link = "http://www.wohnungsboerse.net/immodetail/" + identification
-
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    # Process data
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
 
 
 def __Immowelt(url):
