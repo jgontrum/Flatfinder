@@ -5,12 +5,26 @@ from urllib.request import Request,  urlopen
 from urllib.parse import urlparse
 import time
 import sys
-import re
+import random
 from bs4 import BeautifulSoup
+
+user_agents = ['AppleWebKit/605.1.15',
+               'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
+               'Mozilla/5.0 (Windows NT 10.0; WOW64)',
+               'AppleWebKit/537.36 (KHTML, like Gecko)',
+               'Chrome/72.0.3626.121 Safari/537.36',
+               'Safari/605.1.15',
+               'Version/12.1.1']
+
+accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
 
 
 def get_beautiful_soup(url):
-    req = Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
+    req = Request(url, data=None, headers={'User-Agent': random.choice(user_agents),
+                                           'Accept-Language': 'de,en-US;q=0.7,en;q=0.3',
+                                           'Accept-Encoding': 'utf-8',
+                                           'Accept': accept,
+                                           'Referer': 'http://www.ecosia.de/'})
     return BeautifulSoup(urlopen(req).read(), 'html.parser')
 
 
