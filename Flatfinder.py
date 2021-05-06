@@ -43,12 +43,12 @@ def sendMail(subject, message):
         print("Sending email fails for unknown reasons. (" + str(e) + ")")
 
 # DEPRECATED: Sends a message to an iOS device via Prowl
-def sendProwl(subject, message, url):
-    global prowl
-    try:
-        prowl.add(subject, message, conf.prowlPriority, None, url)
-    except Exception as e:
-        print("Sending Prowl message fails for unknown reasons. (" + str(e) + ")")
+#def sendProwl(subject, message, url):
+#    global prowl
+#    try:
+#        prowl.add(subject, message, conf.prowlPriority, None, url)
+#    except Exception as e:
+#        print("Sending Prowl message fails for unknown reasons. (" + str(e) + ")")
 
 # Creates a message from an offer and sends emails etc
 def notify(offer):
@@ -66,8 +66,8 @@ def notify(offer):
 
     if conf.useMail:
         sendMail(subject, message + meta)
-    if conf.useProwl:
-        sendProwl(subject, message, offer['url'])
+#    if conf.useProwl:
+#        sendProwl(subject, message, offer['url'])
     print(subject)
 
 # Checks weather the offer is okay

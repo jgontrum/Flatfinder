@@ -2,6 +2,7 @@
 __author__ = 'Johannes Gontrum <gontrum@vogelschwarm.com>'
 
 from urllib.request import Request,  urlopen
+from urllib.parse import urlparse
 import time
 import sys
 import re
@@ -42,16 +43,24 @@ def parse(site, url):
 
 def __eBay(url):
     ebay_page = get_beautiful_soup(url)
-    title = ebay_page.find("title")
-    print(title)
-    # Get most recent offer
-    most_recent_ad = ebay_page.find("li", attrs={"class": "ad-listitem"})
-    # todo title
-    # todo link
-    # todo rent
-    # todo location
-    # ad = {"title": ad_description, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
-    return None
+    parsed_uri = urlparse(url)
+    netloc = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    # Get the results for the search
+    search_results = ebay_page.find("div", attrs={"id": "srchrslt-content"})
+    # Get the newest ad
+    newest_ad = search_results.find("article", attrs={"class": "aditem"})
+    ad_content = newest_ad.find("div", attrs={"class": "aditem-main--middle"})
+    # Get the link
+    link = netloc + ad_content.find("a").get("href")
+    # Get title
+    desc = ad_content.find("a").get_text()
+    # Get rent
+    rent = ad_content.find("p", attrs={"class": "aditem-main--middle--price"}).get_text().strip()
+    # Get location
+    location = newest_ad.find("div", attrs={"class": "aditem-main--top--left"}).get_text().strip()
+
+    ad = {"title": desc, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
 
 
 def __WG1Zimmer(url):

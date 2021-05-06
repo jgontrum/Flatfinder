@@ -77,7 +77,7 @@ class Configuration(object):
             sys.exit(1)
 
     def __checkValidity(self):
-        if not "kleinanzeigen.ebay.de" in self.urlEbayKleinanzeigen and len(self.urlEbayKleinanzeigen) > 0:
+        if not "www.ebay-kleinanzeigen.de" in self.urlEbayKleinanzeigen and len(self.urlEbayKleinanzeigen) > 0:
             print("The URL for 'eBay Kleinanzeigen' is not valid.")
             self.urlEbayKleinanzeigen = ""
 
