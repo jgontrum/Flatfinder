@@ -5,18 +5,32 @@ from urllib.request import Request,  urlopen
 from urllib.parse import urlparse
 import time
 import sys
-import re
+import random
 from bs4 import BeautifulSoup
+
+user_agents = ['AppleWebKit/605.1.15',
+               'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
+               'Mozilla/5.0 (Windows NT 10.0; WOW64)',
+               'AppleWebKit/537.36 (KHTML, like Gecko)',
+               'Chrome/72.0.3626.121 Safari/537.36',
+               'Safari/605.1.15',
+               'Version/12.1.1']
+
+accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
 
 
 def get_beautiful_soup(url):
-    req = Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
+    req = Request(url, data=None, headers={'User-Agent': random.choice(user_agents),
+                                           'Accept-Language': 'de,en-US;q=0.7,en;q=0.3',
+                                           'Accept-Encoding': 'utf-8',
+                                           'Accept': accept,
+                                           'Referer': 'http://www.ecosia.de/'})
     return BeautifulSoup(urlopen(req).read(), 'html.parser')
 
 
 def get_netloc(url):
     parsed_uri = urlparse(url)
-    return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    return '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
 
 
 def get_time_stamp():
@@ -124,7 +138,8 @@ def __WohnungsBoerse(url):
     # Search results
     search_results = page.find("section", attrs={"class": "search_result_container"})
     # Newest ad
-    newest_ad = search_results.find("div", attrs={"class": "search_result_entry"})
+    new_tag = search_results.find("div", attrs={"class": "stoerer new"})
+    newest_ad = new_tag.parent
     ad_data = newest_ad.find("div", attrs={"class": "search_result_entry-data"})
     headline = ad_data.find("h3", attrs={"class": "search_result_entry-headline"})
     # Title
@@ -162,37 +177,43 @@ def __Immowelt(url):
     ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
     return ad
 
-
+# Has bot checker functionality
 def __ImmoScout24(url):
     immoc_page = get_beautiful_soup(url)
     # Most recent offer
-    most_recent_offer = immoc_page.find("div", {"class": "resultlist_entry_data"})
+    ads = immoc_page.find("div", attrs={"id": "listings"})
+    newest_ad = ads.find("article", attrs={"class": "result-list-entry"})
     # Title
-    url = most_recent_offer.find("a")
-    title = url.get("title")
+    header = newest_ad.find("h5", attrs={"class": "result-list-entry__brand-title"}).get_text().strip()
+    title = header[3:]
     # URL
-    link = "http://www.immobilienscout24.de" + url.get("href")
+    link = get_netloc(url) + newest_ad.find("a").get("href")
     # Rent
-    rent = most_recent_offer.find("dd", {"class": "value"}).get_text().split()[0]
+    rent = newest_ad.find("dd").get_text().strip()
     # Location
-    location = most_recent_offer.find("span", {"class": "street"}).get_text(" ")
+    location = newest_ad.find("button", attrs={"class": "result-list-entry__map-link"}).get_text().strip()
     # Process data
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
 
 
 def __Immonet(url):
     immonet_page = get_beautiful_soup(url)
     # Most recent offer
-    most_recent_offer = immonet_page.find("div", {"class": "selListItem"})
+    offers = immonet_page.find("div", attrs={"id": "result-list-stage"})
+    latest_offer = offers.find("div")
+    headline = latest_offer.find("a", attrs={"class": "block ellipsis text-225 text-default"})
     # Title
-    url = most_recent_offer.find("a")
-    title = url.get("title")
+    title = headline.get("title")
     # URL
-    link = "http://www.immonet.de" + url.get("href")
+    link = get_netloc(url) + headline.get("href")
     # Rent
-    rent = most_recent_offer.find("span", {"class": "fsLarge"}).get_text()
+    keyfacts = latest_offer.find("div", attrs={"id": "keyfacts-bar"})
+    rent = keyfacts.find("span").get_text().strip()
     # Location
-    location = most_recent_offer.find("p", {"class": "fsSmall"}).get_text("")
-    location = " ".join(location.split())
+    location_raw = latest_offer.find("span", {"class": "text-100"}).get_text().strip().split()
+    location = "{} {}".format(location_raw[2], location_raw[3])
+
     # Process data
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
