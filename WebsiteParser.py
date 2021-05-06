@@ -176,7 +176,7 @@ def __Immowelt(url):
     ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
     return ad
 
-
+# Has bot checker functionality
 def __ImmoScout24(url):
     immoc_page = get_beautiful_soup(url)
     # Most recent offer
