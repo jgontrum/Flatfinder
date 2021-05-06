@@ -1,1 +1,4 @@
 *flatfinder.config
+venv
+*.idea
+*__pycache__

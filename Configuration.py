@@ -26,6 +26,7 @@ class Configuration(object):
             self.useMail = True
             self.smtpMail = config.get("E-Mail", "Address")
             self.smtpServer = config.get("E-Mail", "SMTP-Server")
+            self.smtpPort = config.get("E-Mail", "SMTP-Port")
             self.smtpUser = config.get("E-Mail", "SMTP-User")
             self.smtpPassword = config.get("E-Mail", "SMTP-Password")
             self.smtpRecipient = config.get("E-Mail", "Recipient")
@@ -76,7 +77,7 @@ class Configuration(object):
             sys.exit(1)
 
     def __checkValidity(self):
-        if not "kleinanzeigen.ebay.de" in self.urlEbayKleinanzeigen and len(self.urlEbayKleinanzeigen) > 0:
+        if not "www.ebay-kleinanzeigen.de" in self.urlEbayKleinanzeigen and len(self.urlEbayKleinanzeigen) > 0:
             print("The URL for 'eBay Kleinanzeigen' is not valid.")
             self.urlEbayKleinanzeigen = ""
 

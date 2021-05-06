@@ -31,7 +31,7 @@ def sendMail(subject, message):
         try:
             smtpSender.sendmail(conf.smtpMail, conf.smtpRecipient, msg.as_string())
         except:
-            smtpSender = smtplib.SMTP(conf.smtpServer)
+            smtpSender = smtplib.SMTP(conf.smtpServer, conf.smtpPort)
             smtpSender.ehlo()
             smtpSender.starttls()
             smtpSender.ehlo()
@@ -43,12 +43,12 @@ def sendMail(subject, message):
         print("Sending email fails for unknown reasons. (" + str(e) + ")")
 
 # DEPRECATED: Sends a message to an iOS device via Prowl
-def sendProwl(subject, message, url):
-    global prowl
-    try:
-        prowl.add(subject, message, conf.prowlPriority, None, url)
-    except Exception as e:
-        print("Sending Prowl message fails for unknown reasons. (" + str(e) + ")")
+#def sendProwl(subject, message, url):
+#    global prowl
+#    try:
+#        prowl.add(subject, message, conf.prowlPriority, None, url)
+#    except Exception as e:
+#        print("Sending Prowl message fails for unknown reasons. (" + str(e) + ")")
 
 # Creates a message from an offer and sends emails etc
 def notify(offer):
@@ -66,8 +66,8 @@ def notify(offer):
 
     if conf.useMail:
         sendMail(subject, message + meta)
-    if conf.useProwl:
-        sendProwl(subject, message, offer['url'])
+#    if conf.useProwl:
+#        sendProwl(subject, message, offer['url'])
     print(subject)
 
 # Checks weather the offer is okay
@@ -117,12 +117,12 @@ def init():
     #    prowl = prowlpy.Prowl(conf.prowlApi)
     if conf.useMail:
         try:
-            smtpSender = smtplib.SMTP(conf.smtpServer)
+            smtpSender = smtplib.SMTP(conf.smtpServer, conf.smtpPort)
             smtpSender.ehlo()
             smtpSender.starttls()
             smtpSender.ehlo()
             smtpSender.login(conf.smtpUser, conf.smtpPassword)
-            sendMail("Flatfinder started", "Flatfinder for python 3 started at "+time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
+            # sendMail("Flatfinder started", "Flatfinder for python 3 started at "+time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
         except Exception as e:
             print("Failed to connect to mailserver: " + str(e) + ".\nLeaving now!")
             sys.exit(1)
@@ -153,6 +153,9 @@ def loop():
                         offer = makeOfferUnicode(offer)
                         if checkBlacklist(offer):
                             notify(offer)
+                else:
+                    print("Failed to parse website. "
+                          "You may want to check the code in WebsiteParser.py for correct behaviour of bs4")
         time.sleep(conf.interval)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
