@@ -185,16 +185,20 @@ def __ImmoScout24(url):
 def __Immonet(url):
     immonet_page = get_beautiful_soup(url)
     # Most recent offer
-    most_recent_offer = immonet_page.find("div", {"class": "selListItem"})
+    offers = immonet_page.find("div", attrs={"id": "result-list-stage"})
+    latest_offer = offers.find("div")
+    headline = latest_offer.find("a", attrs={"class": "block ellipsis text-225 text-default"})
     # Title
-    url = most_recent_offer.find("a")
-    title = url.get("title")
+    title = headline.get("title")
     # URL
-    link = "http://www.immonet.de" + url.get("href")
+    link = get_netloc(url) + headline.get("href")
     # Rent
-    rent = most_recent_offer.find("span", {"class": "fsLarge"}).get_text()
+    keyfacts = latest_offer.find("div", attrs={"id": "keyfacts-bar"})
+    rent = keyfacts.find("span").get_text().strip()
     # Location
-    location = most_recent_offer.find("p", {"class": "fsSmall"}).get_text("")
-    location = " ".join(location.split())
+    location_raw = latest_offer.find("span", {"class": "text-100"}).get_text().strip().split()
+    location = "{} {}".format(location_raw[2], location_raw[3])
+
     # Process data
-    return {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    ad = {"title": title, "url": link, "rent": rent, "location": location, "time": get_time_stamp()}
+    return ad
