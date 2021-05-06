@@ -16,7 +16,7 @@ def get_beautiful_soup(url):
 
 def get_netloc(url):
     parsed_uri = urlparse(url)
-    return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    return '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
 
 
 def get_time_stamp():
