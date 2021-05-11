@@ -136,7 +136,7 @@ def __WGWohnung(url):
 def __WohnungsBoerse(url):
     page = get_beautiful_soup(url)
     # Search results
-    search_results = page.find("section", attrs={"class": "search_result_container"})
+    search_results = page.find("div", attrs={"id": "ajax-estate-list"})
     # Newest ad
     new_tag = search_results.find("div", attrs={"class": "stoerer new"})
     newest_ad = new_tag.parent
