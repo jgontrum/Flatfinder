@@ -1,5 +1,3 @@
-## This fork aims to adapt the code to python3
-
 ### Flatfinder helps you to find a flat.
 
 If you have ever tried to find a decent apartment in a popular city like Berlin, you know that you have to be quick. Very quick. When there is a new ad you have to make contact within a few minutes, if you want to get an invitation to visit the advertised flat.
